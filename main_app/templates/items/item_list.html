@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Item List - Inventory Management System{% endblock %}
+
+{% block content %}
+<a href="{% url "item_create" %}">Add New Item</a>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+    </tr>
+    {% for item in items %}
+    <tr>
+        <td><a href="{% url 'item_detail' item_id=item.id %}">{{ item.item_name }}</a></td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.price }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

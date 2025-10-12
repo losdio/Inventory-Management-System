@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Item Details - Inventory Management System{% endblock %}
+
+{% block content %}
+<h1>{{ item.item_name }}</h1>
+<p><strong>Category:</strong> {{ item.category }}</p>
+<p><strong>Description:</strong> {{ item.description }}</p>
+<p><strong>Quantity:</strong> {{ item.quantity }}</p>
+<p><strong>Price:</strong> {{ item.price }}</p>
+<p><strong>Vendor:</strong> {% if item.vendor_id %}{{ item.vendor_id.vendor_name }}{% else %}No vendor assigned.{% endif %} </p>
+<a href="{% url 'item_update' item_id=item.id %}">Edit Item</a>
+<form action="{% url 'item_delete' item_id=item.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Delete Item</button>
+</form>
+<a href="{% url 'item_list' %}">Back to Item List</a>
+{% endblock %}

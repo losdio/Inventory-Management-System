@@ -38,7 +38,7 @@ class Item(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=50)
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    vendor_id = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
+    vendor_id = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -56,8 +56,8 @@ class Order(models.Model):
         COMPLETED = 'completed', 'Completed'
         CANCELED = 'canceled', 'Canceled'
     
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    handled_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ordered_by')
+    handled_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='handled_by')
     status = models.CharField(max_length=50, choices=Status.choices, default=Status.PENDING)
     date = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)

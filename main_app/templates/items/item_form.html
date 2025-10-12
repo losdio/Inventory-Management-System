@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Item Creation - Inventory Management System{% endblock %}
+
+{% block content %}
+<h1>Create new item</h1>
+<form method='post'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+    {% endfor %}
+    <button type="submit">Save</button>
+    <a href="{% url 'item_list' %}">Cancel</a>
+</form>
+{% endblock %}
