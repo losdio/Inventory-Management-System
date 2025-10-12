@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}{{ vendor.vendor_name }} - Inventory Management System{% endblock title %}
+
+{% block content %}
+<h1>{{ vendor.vendor_name }}</h1>
+<p><strong>Vendor email:</strong>{{ vendor.email }}</p>
+<p><strong>Vendor phone number:</strong>{{ vendor.phone_number }}</p>
+{% if items %}
+<p><strong>Items the vendor offers:</strong></p>
+<ul>
+        {% for item in items %}
+            <li><a href="{% url "item_detail" item_id=item.id%}">{{ item.item_name }}</a> - {{ item.category }} - Quantity: {{ item.quantity }}</li>
+        {% endfor %}
+</ul>
+{% endif %}
+<form action="{% url 'vendor_delete' vendor_id=vendor.id %}" method='post'>
+    {% csrf_token %}
+    <button type='submit'>Delete Vendor</button>
+</form>
+<a href="{% url "vendor_list" %}">Back to vendor list</a>
+{% endblock content %}

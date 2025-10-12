@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Item Creation - Inventory Management System{% endblock %}
+{% block title %}Vendor Form - Inventory Management System{% endblock title %}
 
 {% block content %}
-<h1>Item form</h1>
+<h1>Vendor form</h1>
 <form method='post'>
     {% csrf_token %}
     {{ form.as_p }}
@@ -12,7 +12,7 @@
             <p style="color: red;">{{ error }}</p>
         {% endfor %}
     {% endfor %}
-    <button type="submit">Save</button>
-    <a href="{% url 'item_list' %}">Cancel</a>
+    <button type='submit'>Save</button>
+    <a href="{% url "vendor_list" %}">Cancel</a>
 </form>
-{% endblock %}
+{% endblock content %}
