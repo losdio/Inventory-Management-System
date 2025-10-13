@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Orders List - Inventory Management System{% endblock %}
+
+{% block content %}
+<h1>Orders List</h1>
+<ul>
+    {% for order in orders %}
+        <li>
+            <a href="{% url 'order_detail' order.id %}">Order #{{ order.id }} Status: {{ order.status }}</a>
+            <p>Total Price: {{ order.total_price }}</p>
+        </li>
+    {% empty %}
+        <li>No orders available.</li>
+    {% endfor %}
+{% endblock %}

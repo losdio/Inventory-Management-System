@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Order Form - Inventory Management System{% endblock %}
+
+{% block content %}
+<h1>Order form</h1>
+<form method='post'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+    {% endfor %}
+    <button type="submit">Save</button>
+    <a href="{% url 'order_list' %}">Cancel</a>
+</form>
+{% endblock %}

@@ -45,6 +45,22 @@ class Item(models.Model):
     def __str__(self):
         return self.item_name
     
+# Cart model
+
+class Cart(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    def total_price(self):
+        return sum(item.price * item.quantity for item in self.cartitem_set.all())
+
+class CartItem(models.Model):
+    cart_id = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    item_id = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.quantity} of {self.item_id.item_name} in Cart {self.cart_id.id}"
+    
     
 # Order and OrderItem models
 
@@ -57,7 +73,7 @@ class Order(models.Model):
         CANCELED = 'canceled', 'Canceled'
     
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ordered_by')
-    handled_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='handled_by')
+    handled_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='handled_by')
     status = models.CharField(max_length=50, choices=Status.choices, default=Status.PENDING)
     date = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)

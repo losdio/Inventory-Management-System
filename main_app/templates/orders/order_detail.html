@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Order #{{order.id}} - Inventory Management System{% endblock %}
+
+{% block content %}
+<h1>Order #{{ order.id }}</h1>
+<p>Status: {{ order.status }}</p>
+<p>Date: {{ order.date }}</p>
+<p>Ordered by: {{ order.user_id.username }}</p>
+<p>Handled by: {{ order.handled_by.username }}</p>
+<h2>Items in this order:</h2>
+<ul>
+    {% for item in orderitems %}
+        <li>
+            Item: {{ item.item_id.item_name }} - Quantity: {{ item.quantity }}
+            - Price per unit: {{ item.item_id.price }}
+        </li>
+    {% endfor %}
+</ul>
+<p>Total: {{ order.total_price }}</p>
+<a href="{% url "order_update" order_id=order.id %}">Edit order</a>
+<a href="{% url 'order_list' %}">Back to Orders List</a>
+{% endblock %}
