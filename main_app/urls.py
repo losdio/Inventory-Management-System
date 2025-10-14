@@ -28,7 +28,6 @@ urlpatterns = [
     path('orders/create/', views.OrderCreateView.as_view(), name='order_create'),
     path('orders/<int:order_id>/update/', views.OrderUpdateView.as_view(), name='order_update'),
     path('orders/<int:order_id>/delete/', views.OrderDeleteView.as_view(), name='order_delete'),
-    path('orders/<int:order_id>/change_status/', views.OrderStatusUpdateView.as_view(), name='order_change_status'),
     
     # Cart paths
     path('cart/', views.CartDetailView.as_view(), name='cart_detail'),

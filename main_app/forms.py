@@ -11,7 +11,7 @@ class VendorForm(forms.ModelForm):
         model = Vendor
         fields = ['vendor_name', 'email', 'phone_number']
         
-class OrderForm(forms.Form):
+class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['handled_by', 'status']

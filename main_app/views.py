@@ -1,3 +1,4 @@
+from django.forms import inlineformset_factory
 from django.shortcuts import redirect, render
 from .models import Item, Vendor, Order, OrderItem, Cart, CartItem
 from .forms import ItemForm, VendorForm, OrderForm
@@ -81,6 +82,8 @@ class VendorDeleteView(LoginRequiredMixin, DeleteView):
     
 # Order views
 
+OrderItemFormSet = inlineformset_factory(Order, OrderItem, fields=('item_id', 'quantity'), extra=1, can_delete=True)
+
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'orders/order_list.html'
@@ -101,7 +104,7 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
 class OrderCreateView(LoginRequiredMixin, CreateView):
     def post(self, request):
         cart = Cart.objects.get(user_id=request.user.id)
-        order = Order.objects.create(user_id=request.user, total_price=cart.total_price(), status=Order.Status.PENDING)
+        order = Order.objects.create(user_id=request.user.id, total_price=cart.total_price(), status=Order.Status.PENDING)
         for item in cart.cartitem_set.all():
             OrderItem.objects.create(order_id=order.id, item_id=item.item_id, quantity=item.quantity)
         cart.delete()
@@ -136,7 +139,10 @@ class AddToCartView(LoginRequiredMixin, View):
         return redirect('cart_detail', cart_id=cart.id)
 
 class CartDetailView(LoginRequiredMixin, View):
-    template_name = 'cart/cart_detail.html'
+    def get(self, request):
+        cart, created = Cart.objects.get_or_create(user_id=request.user)
+        cart_items = CartItem.objects.filter(cart_id=cart.id)
+        return render(request, 'cart/cart_detail.html', {'cart': cart, 'cart_items': cart_items})
 
 class RemoveFromCartView(LoginRequiredMixin, View):
     def post(self, request, item):
