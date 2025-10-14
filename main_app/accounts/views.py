@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import redirect, render
 from ..forms import SignupForm
+from ..models import Cart
 from django.urls import reverse_lazy
 from django.views.generic import FormView
 
@@ -20,5 +21,6 @@ class SignupView(FormView):
         form = self.form_class(request.POST)
         if form.is_valid():
             user = form.save()
+            cart = Cart.objects.create(user_id=user)
             return redirect(self.success_url)
         return render(request, self.template_name, {'form': form})

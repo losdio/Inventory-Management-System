@@ -49,6 +49,7 @@ class Item(models.Model):
 
 class Cart(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    products = models.ManyToManyField(Item, through='CartItem')
     
     def total_price(self):
         return sum(item.price * item.quantity for item in self.cartitem_set.all())
@@ -76,7 +77,13 @@ class Order(models.Model):
     handled_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='handled_by')
     status = models.CharField(max_length=50, choices=Status.choices, default=Status.PENDING)
     date = models.DateTimeField(auto_now_add=True)
+    products = models.ManyToManyField(Item, through='OrderItem')
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
+    def calculate_total(self):
+        total = sum(item.price * item.quantity for item in self.orderitem_set.all())
+        self.total_price = total
+        self.save()
 
     def __str__(self):
         return f"Order {self.id}"

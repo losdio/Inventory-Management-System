@@ -30,8 +30,8 @@ urlpatterns = [
     path('orders/<int:order_id>/delete/', views.OrderDeleteView.as_view(), name='order_delete'),
     
     # Cart paths
-    path('cart/', views.CartDetailView.as_view(), name='cart_detail'),
+    path('cart/<int:cart_id>/', views.CartDetailView.as_view(), name='cart_detail'),
     path('cart/add/<int:item_id>/', views.AddToCartView.as_view(), name='add_to_cart'),
-    path('cart/remove/<int:item>/', views.RemoveFromCartView.as_view(), name='remove_from_cart'),
-    path('cart/update/<int:item>/', views.CartUpdateView.as_view(), name='update_cart'),
+    path('cart/remove/<int:item_id>/', views.RemoveFromCartView.as_view(), name='remove_from_cart'),
+    path('cart/update/<int:item_id>/', views.CartUpdateView.as_view(), name='update_cart'),
 ]

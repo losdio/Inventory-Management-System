@@ -8,8 +8,8 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 
 # Home view
 
-class HomeView(View):
-    def get(self, request):
+class HomeView(LoginRequiredMixin, View):
+    def get(self, request): 
         return render(request, 'home.html')
     
 # Item views
@@ -139,22 +139,32 @@ class AddToCartView(LoginRequiredMixin, View):
         return redirect('cart_detail', cart_id=cart.id)
 
 class CartDetailView(LoginRequiredMixin, View):
-    def get(self, request):
-        cart, created = Cart.objects.get_or_create(user_id=request.user)
-        cart_items = CartItem.objects.filter(cart_id=cart.id)
-        return render(request, 'cart/cart_detail.html', {'cart': cart, 'cart_items': cart_items})
+    model = Cart
+    template_name = 'cart/cart_detail.html'
+    context_object_name = 'cart'
+    pk_url_kwarg = 'cart_id'
+    
+    def get_queryset(self):
+        return Cart.objects.filter(user_id=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart = self.get_object()
+        context["cart_items"] = CartItem.objects.filter(cart_id=cart.id)
+        return context
+    
 
 class RemoveFromCartView(LoginRequiredMixin, View):
-    def post(self, request, item):
+    def post(self, request, item_id):
         cart = Cart.objects.get(user_id=request.user.id)
-        cart_item = CartItem.objects.get(cart_id=cart.id, item_id=item.id)
+        cart_item = CartItem.objects.get(cart_id=cart.id, item_id=item_id)
         cart_item.delete()
         return redirect('cart_detail', cart_id=cart_item.cart_id.id)
 
 class CartUpdateView(LoginRequiredMixin, View):
-    def post(self, request, item):
+    def post(self, request, item_id):
         cart = Cart.objects.get(user_id=request.user.id)
-        cart_item = CartItem.objects.get(cart_id=cart.id, item_id=item.id)
+        cart_item = CartItem.objects.get(cart_id=cart.id, item_id=item_id)
         quantity = request.POST.get('quantity')
         if quantity:
             cart_item.quantity = quantity
