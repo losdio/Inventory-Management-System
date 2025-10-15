@@ -5,6 +5,7 @@ from .forms import ItemForm, VendorForm, OrderForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, View
+from django.contrib import messages
 
 # Home view
 
@@ -105,15 +106,23 @@ class OrderCreateView(LoginRequiredMixin, View):
     def get(self, request):
         return redirect('cart_detail', cart_id=Cart.objects.get(user_id=request.user).id)
     def post(self, request):
+        allowed = True
         cart = Cart.objects.get(user_id=request.user)
-        order = Order.objects.create(user_id=request.user, total_price=cart.total_price(), status=Order.Status.PENDING)
         for ci in cart.cartitem_set.all():
-            OrderItem.objects.create(order_id=order, item_id=ci.item_id, quantity=ci.quantity, price=ci.item_id.price)
             item = Item.objects.get(id=ci.item_id.id)
-            item.quantity -= ci.quantity
-            item.save()
-        cart.delete()
-        return redirect('order_list')
+            if item.quantity < ci.quantity:
+                messages.error(request, f"Not enough stock for {item.item_name}.")
+                return redirect('cart_detail', cart_id=cart.id)
+                allowed = False
+        order = Order.objects.create(user_id=request.user, total_price=cart.total_price(), status=Order.Status.PENDING)
+        if allowed:
+            for ci in cart.cartitem_set.all():
+                item = Item.objects.get(id=ci.item_id.id)
+                OrderItem.objects.create(order_id=order, item_id=ci.item_id, quantity=ci.quantity, price=ci.item_id.price)
+                item.quantity -= ci.quantity
+                item.save()
+            cart.delete()
+            return redirect('order_list')
 
 class OrderUpdateView(LoginRequiredMixin, UpdateView):
     model = Order

@@ -15,6 +15,10 @@
         <a href="{% url "order_list" %}">Orders List</a>
         {% if request.user.is_authenticated and cart_id %}
         <a href="{% url "cart_detail" cart_id=cart_id %}">Go to cart</a>
+        <form action="{% url "logout" %}" method='post'>
+            {% csrf_token %}
+            <button type='submit'>Logout</button>
+        </form>
         {% endif %}
     </div>
     {% block content %}
