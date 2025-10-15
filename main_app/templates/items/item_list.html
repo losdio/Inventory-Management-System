@@ -1,16 +1,20 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Items List - Inventory Management System{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static "css/list.css" %}">
+{% endblock head %}
+
 {% block content %}
 <h1>Item list</h1>
-<a href="{% url "item_create" %}">Add New Item</a>
 <table>
     <tr>
         <th>Name</th>
         <th>Category</th>
         <th>Price</th>
-        <th>Add to cart</th>
+        <th></th>
     </tr>
     {% for item in items %}
     {% if item.quantity or request.user.role == 'admin' %}
@@ -25,5 +29,9 @@
     </tr>
     {% endif %}
     {% endfor %}
+    <tr>
+        <td colspan='4'><a class='add-item' href="{% url "item_create" %}">Add New Item</a></td>
+    </tr>
 </table>
+
 {% endblock %}

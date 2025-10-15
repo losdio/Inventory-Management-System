@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% load my_filters %}
+{% load static %}
 
 {% block title %}Cart Details - Inventory Management System{% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static "css/list.css" %}">
+{% endblock head %}
 
 {% block content %}
 <h1>Cart Details</h1>
@@ -16,10 +21,11 @@
     {% for cart_item in cart_items %}
     <tr>
         <td>{{ cart_item.item_id.item_name }}</td>
-        <td><form action="{% url "update_cart" cart_item.item_id.id %}" method="post">
+        <td>
+            <form action="{% url "update_cart" cart_item.item_id.id %}" method="post">
             {% csrf_token %}
             <input type="number" name="quantity" value="{{ cart_item.quantity }}" min="1">
-            <button type='submit'>Update</button>
+            <button type='submit' class='update'>Update</button>
         </form>
         </td>
         <td>{{ cart_item.item_id.price }}</td>
@@ -35,11 +41,16 @@
         <td><strong>{{ cart.total_price }}</strong></td>
         <td></td>
     </tr>
+    <tr>
+        <td colspan='5'>
+            <form action="{% url "order_create" %}" method='post'>
+                {% csrf_token %}
+                <button type='submit'>Place Order</button>
+            </form>
+        </td>
+    </tr>
 </table>
-<form action="{% url "order_create" %}" method='post'>
-    {% csrf_token %}
-    <button type='submit'>Place Order</button>
-</form>
+
 <a href="{% url 'home' %}">Go back to the home menu</a>
 {% else %}
 <p>Your cart is empty.</p>

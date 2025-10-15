@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}{{ vendor.vendor_name }} - Inventory Management System{% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static "css/detail.css" %}">
+{% endblock head %}
 
 {% block content %}
 <h1>{{ vendor.vendor_name }}</h1>
@@ -9,16 +14,18 @@
 {% if items %}
 <p><strong>Items the vendor offers:</strong></p>
 <ul>
-        {% for item in items %}
-            <li><a href="{% url "item_detail" item_id=item.id%}">{{ item.item_name }}</a> - {{ item.category }} - Quantity: {{ item.quantity }}</li>
-        {% endfor %}
+{% for item in items %}
+    <li><a href="{% url "item_detail" item_id=item.id%}">{{ item.item_name }}</a> - {{ item.category }} - Quantity: {{ item.quantity }}</li>
+{% endfor %}
 </ul>
 {% endif %}
 {% if request.user.role == 'admin' %}
+<div class='inline-flex-container'>
+<a href="{% url 'vendor_update' vendor_id=vendor.id %}">Edit Vendor</a>
 <form action="{% url 'vendor_delete' vendor_id=vendor.id %}" method='post'>
     {% csrf_token %}
     <button type='submit'>Delete Vendor</button>
 </form>
+</div>
 {% endif %}
-<a href="{% url "vendor_list" %}">Back to vendor list</a>
 {% endblock content %}

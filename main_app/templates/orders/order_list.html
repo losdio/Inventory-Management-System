@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Orders List - Inventory Management System{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static "css/detail.css" %}">
+{% endblock head %}
 
 {% block content %}
 <h1>Orders List</h1>

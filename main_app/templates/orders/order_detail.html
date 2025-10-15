@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Order #{{order.id}} - Inventory Management System{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static "css/detail.css" %}">
+{% endblock head %}
 
 {% block content %}
 <h1>Order #{{ order.id }}</h1>
@@ -18,6 +23,7 @@
     {% endfor %}
 </ul>
 <p>Total: {{ order.total_price }}</p>
+<div class='inline-flex-container'>
 {% if request.user.role == 'admin' %}
 <a href="{% url "order_update" order_id=order.id %}">Edit order</a>
 <form action="{% url "order_delete" order_id=order.id %}" method='post'>
@@ -26,4 +32,5 @@
 </form>
 {% endif %}
 <a href="{% url 'order_list' %}">Back to Orders List</a>
+</div>
 {% endblock %}

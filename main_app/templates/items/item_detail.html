@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Item Details - Inventory Management System{% endblock %}
+{% block title %}Item #{{ item.id }} - Inventory Management System{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static "css/detail.css" %}">
+{% endblock head %}
 
 {% block content %}
 <h1>{{ item.item_name }}</h1>
@@ -9,6 +14,7 @@
 <p><strong>Quantity:</strong> {{ item.quantity }}</p>
 <p><strong>Price:</strong> {{ item.price }}</p>
 <p><strong>Vendor:</strong> {% if item.vendor_id %} <a href="{% url "vendor_details" vendor_id=item.vendor_id.id%}">{{ item.vendor_id.vendor_name }}</a>{% else %}No vendor assigned.{% endif %} </p>
+<div class='inline-flex-container'>
 {% if request.user.role != 'customer' %}
 <a href="{% url 'item_update' item_id=item.id %}">Edit Item</a>
 {% if request.user.role == 'admin' %}
@@ -18,5 +24,5 @@
 </form>
 {% endif %}
 {% endif %}
-<a href="{% url 'item_list' %}">Back to Item List</a>
+</div>
 {% endblock %}

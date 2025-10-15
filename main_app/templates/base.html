@@ -1,14 +1,17 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Inventory Management System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static "css/base.css" %}">
     {% block head %}
     {% endblock %}
 </head>
 <body>
-    <div>
+    <div class='navbar'>
         <a href="{% url "home" %}">Homepage</a>
         <a href="{% url "item_list" %}">Item list</a>
         <a href="{% url "vendor_list" %}">Vendors list</a>

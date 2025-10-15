@@ -1,6 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Vendors List - Inventory Management System{% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static "css/list.css" %}">
+{% endblock head %}
 
 {% block content %}
 <h1>Vendors list</h1>
