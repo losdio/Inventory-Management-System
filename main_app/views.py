@@ -1,6 +1,6 @@
 from django.forms import inlineformset_factory
 from django.shortcuts import redirect, render
-from .models import Item, Vendor, Order, OrderItem, Cart, CartItem
+from .models import Item, User, Vendor, Order, OrderItem, Cart, CartItem
 from .forms import ItemForm, VendorForm, OrderForm
 from .core.mixins import RoleRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -191,3 +191,17 @@ class CartUpdateView(LoginRequiredMixin, View):
         else:
             return redirect('remove_from_cart', item_id=item)
         return redirect('cart_detail', cart_id=cart_item.cart_id.id)
+    
+
+from django.http import HttpResponse
+
+def create_admin(request):
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser(
+            username="admin",
+            email="admin@example.com",
+            password="admin123"
+        )
+        return HttpResponse("Superuser created successfully!")
+    else:
+        return HttpResponse("Superuser already exists.")
