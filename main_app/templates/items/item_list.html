@@ -21,7 +21,7 @@
     <tr>
         <td><a href="{% url 'item_detail' item_id=item.id %}">{{ item.item_name }}</a></td>
         <td>{{ item.category }}</td>
-        <td>{{ item.price }}</td>3
+        <td>{{ item.price }}</td>
         <td><form action="{% url 'add_to_cart' item.id %}" method='post'>
             {% csrf_token %}
             <button type='submit'>Add to cart</button>
