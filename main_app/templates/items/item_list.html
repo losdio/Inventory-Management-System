@@ -29,9 +29,11 @@
     </tr>
     {% endif %}
     {% endfor %}
+    {% if request.user.role == 'admin' %}
     <tr>
         <td colspan='4'><a class='add-item' href="{% url "item_create" %}">Add New Item</a></td>
     </tr>
+    {% endif %}
 </table>
 
 {% endblock %}

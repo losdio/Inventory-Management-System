@@ -9,7 +9,6 @@
 
 {% block content %}
 <h1>Vendors list</h1>
-<a href="{% url "vendor_create" %}">Add a new vendor</a>
 <table>
     <tr>
         <th>
@@ -35,5 +34,12 @@
         </td>
     </tr>
     {% endfor %}
+    {% if request.user.role == 'admin' %}
+    <tr>
+        <td colspan='3'>
+            <a href="{% url "vendor_create" %}">Add a new vendor</a>
+        </td>
+    </tr>
+    {% endif %}
 </table>
 {% endblock content %}
