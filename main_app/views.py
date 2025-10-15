@@ -101,12 +101,17 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
         context['orderitems'] = OrderItem.objects.select_related('order_id').filter(order_id=order.id)
         return context
 
-class OrderCreateView(LoginRequiredMixin, CreateView):
+class OrderCreateView(LoginRequiredMixin, View):
+    def get(self, request):
+        return redirect('cart_detail', cart_id=Cart.objects.get(user_id=request.user).id)
     def post(self, request):
-        cart = Cart.objects.get(user_id=request.user.id)
-        order = Order.objects.create(user_id=request.user.id, total_price=cart.total_price(), status=Order.Status.PENDING)
-        for item in cart.cartitem_set.all():
-            OrderItem.objects.create(order_id=order.id, item_id=item.item_id, quantity=item.quantity)
+        cart = Cart.objects.get(user_id=request.user)
+        order = Order.objects.create(user_id=request.user, total_price=cart.total_price(), status=Order.Status.PENDING)
+        for ci in cart.cartitem_set.all():
+            OrderItem.objects.create(order_id=order, item_id=ci.item_id, quantity=ci.quantity, price=ci.item_id.price)
+            item = Item.objects.get(id=ci.item_id.id)
+            item.quantity -= ci.quantity
+            item.save()
         cart.delete()
         return redirect('order_list')
 
@@ -118,10 +123,12 @@ class OrderUpdateView(LoginRequiredMixin, UpdateView):
     pk_url_kwarg = 'order_id'
 
 class OrderDeleteView(LoginRequiredMixin, DeleteView):
-    pass
+    model = Order
+    success_url = reverse_lazy('order_list')
+    pk_url_kwarg = 'order_id'
 
-class OrderStatusUpdateView(LoginRequiredMixin, View):
-    pass
+# class OrderStatusUpdateView(LoginRequiredMixin, View):
+#     pass
 
 # Cart views
 

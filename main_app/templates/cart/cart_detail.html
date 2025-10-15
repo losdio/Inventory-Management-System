@@ -36,7 +36,10 @@
         <td></td>
     </tr>
 </table>
-<a href="{% url "order_create" %}">Place order?</a>
+<form action="{% url "order_create" %}" method='post'>
+    {% csrf_token %}
+    <button type='submit'>Place Order</button>
+</form>
 <a href="{% url 'home' %}">Go back to the home menu</a>
 {% else %}
 <p>Your cart is empty.</p>
