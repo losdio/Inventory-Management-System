@@ -2,6 +2,7 @@ from django.forms import inlineformset_factory
 from django.shortcuts import redirect, render
 from .models import Item, Vendor, Order, OrderItem, Cart, CartItem
 from .forms import ItemForm, VendorForm, OrderForm
+from .core.mixins import RoleRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView, View
@@ -26,23 +27,27 @@ class ItemDetailView(DetailView):
     context_object_name = 'item'
     pk_url_kwarg = 'item_id'
 
-class ItemCreateView(LoginRequiredMixin, CreateView):
+class ItemCreateView(RoleRequiredMixin, CreateView):
     model = Item
     form_class = ItemForm
     template_name = 'items/item_form.html'
     success_url = reverse_lazy('item_list')
+    allowed_roles = ['admin']
 
-class ItemUpdateView(LoginRequiredMixin, UpdateView):  
+class ItemUpdateView(RoleRequiredMixin, UpdateView):  
     model = Item
     form_class = ItemForm
     template_name = 'items/item_form.html'
     success_url = reverse_lazy('item_list')
     pk_url_kwarg = 'item_id'
+    allowed_roles = ['admin', 'staff']
+    
 
-class ItemDeleteView(LoginRequiredMixin, DeleteView):
+class ItemDeleteView(RoleRequiredMixin, DeleteView):
     model = Item
     success_url = reverse_lazy('item_list')
     pk_url_kwarg = 'item_id'
+    allowed_roles = ['admin']
 
 # Vendor views
 
@@ -63,23 +68,26 @@ class VendorDetailView(DetailView):
         context['items'] = Item.objects.select_related('vendor_id').filter(vendor_id=vendor.id)
         return context
 
-class VendorCreateView(LoginRequiredMixin, CreateView):
+class VendorCreateView(RoleRequiredMixin, CreateView):
     model = Vendor
     form_class = VendorForm
     template_name = 'vendors/vendor_form.html'
     success_url = reverse_lazy('vendor_list')
+    allowed_roles = ['admin']
 
-class VendorUpdateView(LoginRequiredMixin, UpdateView):
+class VendorUpdateView(RoleRequiredMixin, UpdateView):
     model = Vendor
     form_class = VendorForm
     template_name = 'vendors/vendor_form.html'
     success_url = reverse_lazy('vendor_list')
     pk_url_kwarg = 'vendor_id'
+    allowed_roles = ['admin']
 
-class VendorDeleteView(LoginRequiredMixin, DeleteView):
+class VendorDeleteView(RoleRequiredMixin, DeleteView):
     model = Vendor
     success_url = reverse_lazy('vendor_list')
     pk_url_kwarg = 'vendor_id'
+    allowed_roles = ['admin']
     
 # Order views
 
@@ -125,20 +133,19 @@ class OrderCreateView(LoginRequiredMixin, View):
             messages.success(request, "Order placed successfully!")
             return redirect('order_list')
 
-class OrderUpdateView(LoginRequiredMixin, UpdateView):
+class OrderUpdateView(RoleRequiredMixin, UpdateView):
     model = Order
     form_class = OrderForm
     template_name = 'orders/order_form.html'
     success_url = reverse_lazy('order_list')
     pk_url_kwarg = 'order_id'
+    allowed_roles = ['staff', 'admin']
 
-class OrderDeleteView(LoginRequiredMixin, DeleteView):
+class OrderDeleteView(RoleRequiredMixin, DeleteView):
     model = Order
     success_url = reverse_lazy('order_list')
     pk_url_kwarg = 'order_id'
-
-# class OrderStatusUpdateView(LoginRequiredMixin, View):
-#     pass
+    allowed_roles = ['staff', 'admin']
 
 # Cart views
 
