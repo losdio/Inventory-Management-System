@@ -5,12 +5,26 @@
 {% block content %}
 <h1>Orders List</h1>
 <ul>
-    {% for order in orders %}
+    {% if request.user.role == 'admin' or request.user.role == 'staff' %}
+        {% for order in orders %}
+            <li>
+                <a href="{% url 'order_detail' order.id %}">Order #{{ order.id }} Status: {{ order.status }}</a>
+                <p>Total Price: {{ order.total_price }}</p>
+            </li>
+        {% empty %}
+            <li>No orders available.</li>
+        {% endfor %}
+    {% else %}
+        {% for order in orders %}
+        {% if order.user_id.id == request.user.id %}
         <li>
             <a href="{% url 'order_detail' order.id %}">Order #{{ order.id }} Status: {{ order.status }}</a>
             <p>Total Price: {{ order.total_price }}</p>
         </li>
-    {% empty %}
+        {% endif %}
+        {% empty %}
         <li>No orders available.</li>
-    {% endfor %}
+        {% endfor %}
+    {% endif %}
+
 {% endblock %}

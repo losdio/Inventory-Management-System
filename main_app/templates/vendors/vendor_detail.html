@@ -14,9 +14,11 @@
         {% endfor %}
 </ul>
 {% endif %}
+{% if request.user.role == 'admin' %}
 <form action="{% url 'vendor_delete' vendor_id=vendor.id %}" method='post'>
     {% csrf_token %}
     <button type='submit'>Delete Vendor</button>
 </form>
+{% endif %}
 <a href="{% url "vendor_list" %}">Back to vendor list</a>
 {% endblock content %}

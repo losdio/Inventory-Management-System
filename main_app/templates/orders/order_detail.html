@@ -18,10 +18,12 @@
     {% endfor %}
 </ul>
 <p>Total: {{ order.total_price }}</p>
+{% if request.user.role == 'admin' %}
 <a href="{% url "order_update" order_id=order.id %}">Edit order</a>
 <form action="{% url "order_delete" order_id=order.id %}" method='post'>
     {% csrf_token %}
     <button type='submit'>Delete Order</button>
 </form>
+{% endif %}
 <a href="{% url 'order_list' %}">Back to Orders List</a>
 {% endblock %}

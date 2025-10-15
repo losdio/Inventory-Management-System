@@ -9,10 +9,14 @@
 <p><strong>Quantity:</strong> {{ item.quantity }}</p>
 <p><strong>Price:</strong> {{ item.price }}</p>
 <p><strong>Vendor:</strong> {% if item.vendor_id %} <a href="{% url "vendor_details" vendor_id=item.vendor_id.id%}">{{ item.vendor_id.vendor_name }}</a>{% else %}No vendor assigned.{% endif %} </p>
+{% if request.user.role != 'customer' %}
 <a href="{% url 'item_update' item_id=item.id %}">Edit Item</a>
+{% if request.user.role == 'admin' %}
 <form action="{% url 'item_delete' item_id=item.id %}" method="post">
     {% csrf_token %}
     <button type="submit">Delete Item</button>
 </form>
+{% endif %}
+{% endif %}
 <a href="{% url 'item_list' %}">Back to Item List</a>
 {% endblock %}

@@ -3,6 +3,10 @@
 {% block title %}Home - Inventory Management System{% endblock %}
 
 {% block content %}
+{% if request.user.is_authenticated %}
+<h1>Welcome {{ request.user.username }} to my Inventory Management System</h1>
+{% else %}
 <h1>Welcome to my Inventory Management System</h1>
+{% endif %}
 <p>This is the home page.</p>
 {% endblock %}
