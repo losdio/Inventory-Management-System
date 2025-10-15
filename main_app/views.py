@@ -9,7 +9,7 @@ from django.contrib import messages
 
 # Home view
 
-class HomeView(LoginRequiredMixin, View):
+class HomeView(View):
     def get(self, request): 
         return render(request, 'home.html')
     
@@ -112,8 +112,8 @@ class OrderCreateView(LoginRequiredMixin, View):
             item = Item.objects.get(id=ci.item_id.id)
             if item.quantity < ci.quantity:
                 messages.error(request, f"Not enough stock for {item.item_name}.")
-                return redirect('cart_detail', cart_id=cart.id)
                 allowed = False
+                return redirect('cart_detail', cart_id=cart.id)
         order = Order.objects.create(user_id=request.user, total_price=cart.total_price(), status=Order.Status.PENDING)
         if allowed:
             for ci in cart.cartitem_set.all():
@@ -122,6 +122,7 @@ class OrderCreateView(LoginRequiredMixin, View):
                 item.quantity -= ci.quantity
                 item.save()
             cart.delete()
+            messages.success(request, "Order placed successfully!")
             return redirect('order_list')
 
 class OrderUpdateView(LoginRequiredMixin, UpdateView):
