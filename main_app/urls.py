@@ -35,5 +35,5 @@ urlpatterns = [
     path('cart/remove/<int:item_id>/', views.RemoveFromCartView.as_view(), name='remove_from_cart'),
     path('cart/update/<int:item_id>/', views.CartUpdateView.as_view(), name='update_cart'),
     
-    path('create-admin/', views.create_admin, name='create_admin'),
+    # path('create-admin/', views.create_admin, name='create_admin'),
 ]
