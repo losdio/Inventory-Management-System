@@ -1,43 +1,42 @@
 {% extends "base.html" %}
+{% load my_filters %}
 
 {% block title %}Cart Details - Inventory Management System{% endblock title %}
 
 {% block content %}
 <h1>Cart Details</h1>
-{% if cart.cartitem_set.all %}
+{% if cart_items %}
 <table>
     <tr>
         <th>Item</th>
         <th>Quantity</th>
         <th>Price</th>
         <th>Total</th>
-        <th>Actions</th>
     </tr>
-    {% for cart_item in cart.cartitem_set.all %}
+    {% for cart_item in cart_items %}
     <tr>
         <td>{{ cart_item.item_id.item_name }}</td>
-        <td>
-            <form action="{% url 'update_cart' cart_item.item_id.id %}" method="post">
-                {% csrf_token %}
-                <input type="number" name="quantity" value="{{ cart_item.quantity }}" min="1">
-                <button type='submit'>Update</button>
-            </form>
+        <td><form action="{% url "update_cart" cart_item.item_id.id %}" method="post">
+            {% csrf_token %}
+            <input type="number" name="quantity" value="{{ cart_item.quantity }}" min="1">
+            <button type='submit'>Update</button>
+        </form>
         </td>
-        <td>${{ cart_item.item_id.price }}</td>
-        <td>${{ cart_item.item_id.price|floatformat:2 }} × {{ cart_item.quantity }} = ${{ cart_item.item_id.price|floatformat:2|multiply:cart_item.quantity|floatformat:2 }}</td>
-        <td>
-            <form action="{% url 'remove_from_cart' cart_item.item_id.id %}" method="post" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit">Remove</button>
-            </form>
-        </td>
+        <td>{{ cart_item.item_id.price }}</td>
+        <td>{{ cart_item.quantity | multiply:cart_item.item_id.price }}</td>
+        <td><form action="{% url "remove_from_cart" cart_item.item_id.id%}" method="post">
+            {% csrf_token %}
+            <button type='submit'>Remove from cart</button>
+        </form></td>
     </tr>
     {% endfor %}
     <tr>
         <td colspan="3"><strong>Total Price</strong></td>
-        <td><strong>${{ cart.total_price|floatformat:2 }}</strong></td>
+        <td><strong>{{ cart.total_price }}</strong></td>
+        <td></td>
     </tr>
 </table>
+<a href="{% url "order_create" %}">Place order?</a>
 <a href="{% url 'home' %}">Go back to the home menu</a>
 {% else %}
 <p>Your cart is empty.</p>

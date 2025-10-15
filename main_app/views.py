@@ -129,23 +129,17 @@ class AddToCartView(LoginRequiredMixin, View):
     def post(self, request, item_id):
         item = Item.objects.get(id=item_id)
         cart, created = Cart.objects.get_or_create(user_id=request.user)
-        cart_item, created = CartItem.objects.get_or_create(cart_id=cart.id, item_id=item.id)
+        cart_item, created = CartItem.objects.get_or_create(cart_id=cart, item_id=item)
         if not created:
-            cart_item.quantity += 1
-            cart_item.save()
-        else:
             cart_item.quantity += 1
             cart_item.save()
         return redirect('cart_detail', cart_id=cart.id)
 
-class CartDetailView(LoginRequiredMixin, View):
+class CartDetailView(LoginRequiredMixin, DetailView):
     model = Cart
     template_name = 'cart/cart_detail.html'
     context_object_name = 'cart'
     pk_url_kwarg = 'cart_id'
-    
-    def get_queryset(self):
-        return Cart.objects.filter(user_id=self.request.user)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -153,20 +147,23 @@ class CartDetailView(LoginRequiredMixin, View):
         context["cart_items"] = CartItem.objects.filter(cart_id=cart.id)
         return context
     
-
 class RemoveFromCartView(LoginRequiredMixin, View):
     def post(self, request, item_id):
-        cart = Cart.objects.get(user_id=request.user.id)
-        cart_item = CartItem.objects.get(cart_id=cart.id, item_id=item_id)
+        cart = Cart.objects.get(user_id=request.user)
+        item = Item.objects.get(id=item_id)
+        cart_item = CartItem.objects.get(cart_id=cart, item_id=item)
         cart_item.delete()
         return redirect('cart_detail', cart_id=cart_item.cart_id.id)
 
 class CartUpdateView(LoginRequiredMixin, View):
     def post(self, request, item_id):
-        cart = Cart.objects.get(user_id=request.user.id)
-        cart_item = CartItem.objects.get(cart_id=cart.id, item_id=item_id)
+        cart = Cart.objects.get(user_id=request.user)
+        item = Item.objects.get(id=item_id)
+        cart_item = CartItem.objects.get(cart_id=cart, item_id=item)
         quantity = request.POST.get('quantity')
         if quantity:
             cart_item.quantity = quantity
             cart_item.save()
+        else:
+            return redirect('remove_from_cart', item_id=item)
         return redirect('cart_detail', cart_id=cart_item.cart_id.id)
